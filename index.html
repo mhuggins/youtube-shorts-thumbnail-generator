@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>YouTube Shorts Thumbnail Generator</title>
+    <style>
+      label {
+        display: block;
+        margin-bottom: 1em;
+      }
+  
+      label span {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <label>
+      <span>YouTube Video URL:</span>
+      <input id="id" value="https://youtube.com/watch?v=M7lc1UVf-VE" style="width: 300px" />
+      <button id="load" type="button">
+        Load Video
+      </button>
+    </label>
+
+    <div id="container" style="display: none">
+      <video id="video" controls width="640" height="480"></video>
+
+      <div>
+        <button id="jumpback" type="button">
+          &laquo;
+        </button>
+        <button id="tickback" type="button">
+          &lsaquo;
+        </button>
+        <button id="tickforward" type="button">
+          &rsaquo;
+        </button>
+        <button id="jumpforward" type="button">
+          &raquo;
+        </button>
+        <button id="save" type="button">
+          Save Thumbnail
+        </button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@thelevicole/youtube-to-html5-loader@4.0.1/dist/YouTubeToHtml5.min.js"></script>
+    <script>
+      var input = document.getElementById('id');
+      var video = document.getElementById('video');
+      var container = document.getElementById('container');
+      var fps = 1 / 25;
+      const jumpSize = 50;
+
+      document.getElementById('load').addEventListener('click', function () {
+        video.setAttribute('data-url', input.value);
+        container.style.display = 'block';
+
+        var player = new YouTubeToHtml5({
+          selector: '#video',
+          attribute: 'data-url'
+        });
+      });
+
+      document.getElementById('tickback').addEventListener('click', function () {
+        video.currentTime -= fps;
+      });
+
+      document.getElementById('tickforward').addEventListener('click', function () {
+        video.currentTime += fps;
+      });
+
+      document.getElementById('jumpback').addEventListener('click', function () {
+        video.currentTime -= fps * jumpSize;
+      });
+
+      document.getElementById('jumpforward').addEventListener('click', function () {
+        video.currentTime += fps * jumpSize;
+      });
+
+      document.getElementById('save').addEventListener('click', function () {
+        if (!video.paused) {
+          return;
+        }
+
+        var img = new Image();
+        // img.crossOrigin = 'anonymous';
+        img.onload = function () {
+          video.getContext('2d').drawImage(img, 0, 0);
+        };
+        img.src = 'thumbnail.png';
+
+        // function download(content, filename, contentType) {
+        //   if (!contentType) contentType = 'application/octet-stream';
+        //   var a = document.createElement('a');
+        //   var blob = new Blob([content], { type: contentType });
+        //   a.href = URL.createObjectURL(blob);
+        //   a.download = filename;
+        //   a.click();
+        // }
+        // var anchor = document.createElement('a');
+        // anchor.download = 'thumbnail.png';
+        // anchor.href = canvas.toDataURL();
+        // anchor.click();
+      });
+    </script>
+  </body>
+</html>
